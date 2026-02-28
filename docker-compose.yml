@@ -57,9 +57,6 @@ services:
       - DB_DATABASE=${DB_DATABASE:-flight_search}
       - DB_USERNAME=${DB_USERNAME:-root}
       - DB_PASSWORD=${DB_PASSWORD:-secret}
-    command: >
-      sh -c "while ! nc -z mysql 3306; do sleep 1; done &&
-             /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"
 
 networks:
   flight-search-network:
