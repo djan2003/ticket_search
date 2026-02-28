@@ -1,0 +1,40 @@
+{
+    "name": "flight-search/aviasales-telegram",
+    "description": "Flight search service with Aviasales API and Telegram notifications",
+    "type": "project",
+    "require": {
+        "php": "^8.1",
+        "laravel/lumen-framework": "^10.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "irazasyed/telegram-bot-sdk": "^3.13"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.21",
+        "mockery/mockery": "^1.5",
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
