@@ -24,16 +24,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Run flight search every 6 hours
+        // Run flight search once a day during the day (13:00 UTC)
         $schedule->command('flights:search')
-            ->everySixHours()
+            ->dailyAt('13:00')
             ->withoutOverlapping()
             ->runInBackground();
-
-        // Alternative: Search 4 times a day at specific times
-        // $schedule->command('flights:search')->dailyAt('09:00');
-        // $schedule->command('flights:search')->dailyAt('13:00');
-        // $schedule->command('flights:search')->dailyAt('17:00');
-        // $schedule->command('flights:search')->dailyAt('21:00');
     }
 }
