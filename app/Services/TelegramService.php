@@ -160,4 +160,21 @@ class TelegramService
         $message = "⚠️ *Ошибка*\n\n{$error}";
         return $this->sendMessage($message);
     }
+    /**
+     * Get updates from Telegram (Long Polling)
+     *
+     * @param array $params
+     * @return array
+     */
+    public function getUpdates(array $params = []): array
+    {
+        try {
+            return $this->telegram->getUpdates($params);
+        } catch (TelegramSDKException $e) {
+            Log::error('Telegram getUpdates error', [
+                'message' => $e->getMessage()
+            ]);
+            return [];
+        }
+    }
 }
