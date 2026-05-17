@@ -10,12 +10,14 @@ class TelegramService
 {
     protected Api $telegram;
     protected string $chatId;
+    protected ?string $channelId;
 
     public function __construct()
     {
         try {
             $this->telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
             $this->chatId = env('TELEGRAM_CHAT_ID');
+            $this->channelId = env('TELEGRAM_CHANNEL_ID');
         } catch (TelegramSDKException $e) {
             Log::error('Telegram initialization error', ['message' => $e->getMessage()]);
         }
@@ -34,7 +36,33 @@ class TelegramService
         }
 
         $message = $this->formatFlightResults($flights);
+        $this->sendToChannel($message);
         return $this->sendMessage($message);
+    }
+
+    public function sendToChannel(string $message): bool
+    {
+        if (!$this->channelId) {
+            return false;
+        }
+
+        try {
+            $this->telegram->sendMessage([
+                'chat_id' => $this->channelId,
+                'text' => $message,
+                'parse_mode' => 'Markdown',
+                'disable_web_page_preview' => false,
+            ]);
+
+            Log::info('Telegram channel message sent', ['channel_id' => $this->channelId]);
+            return true;
+        } catch (TelegramSDKException $e) {
+            Log::error('Telegram channel send error', [
+                'message' => $e->getMessage(),
+                'channel_id' => $this->channelId,
+            ]);
+            return false;
+        }
     }
 
     /**
