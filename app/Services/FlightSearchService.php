@@ -51,11 +51,6 @@ class FlightSearchService
         $searchDays = min($daysAhead, 28);
 
         foreach ($destinations as $destination) {
-            // Early exit if we have enough results
-            if (count($results) >= $limit * 2) {
-                break;
-            }
-
             // Skip self-route (e.g. EVN is both an origin and a destination)
             if ($destination === $origin) {
                 continue;
@@ -345,30 +340,32 @@ class FlightSearchService
                         continue;
                     }
                     
+                    // No limit here: gather every destination so the feed is complete.
                     $results = $this->searchVisaFreeDestinations(
                         $origin,
                         $depDay,
                         $retDay,
                         $daysAhead,
-                        $limit
+                        PHP_INT_MAX
                     );
-                    
+
                     $allResults = array_merge($allResults, $results);
                 }
             }
-            
+
             // Sort by price
             usort($allResults, function ($a, $b) {
                 return ($a['price'] ?? PHP_INT_MAX) <=> ($b['price'] ?? PHP_INT_MAX);
             });
 
-            // Cap to a few per destination so the list covers more cities
-            $allResults = $this->limitPerDestination($allResults, 3, $limit);
+            // Feed: cheapest flight per destination across everything, so the
+            // landing has every direction (incl. Istanbul/Dubai), not just the top.
+            $this->feedService->store($origin, $this->cheapestPerDestination($allResults));
 
-            // Persist for the public landing feed (reuses these results, no extra API calls)
-            $this->feedService->store($origin, $allResults);
+            // Telegram: curated short list, max 3 per destination.
+            $telegramResults = $this->limitPerDestination($allResults, 3, $limit);
 
-            return $this->telegramService->sendFlightResults($allResults, $origin);
+            return $this->telegramService->sendFlightResults($telegramResults, $origin);
         } catch (\Exception $e) {
             Log::error('Search and notify error', ['message' => $e->getMessage()]);
             $this->telegramService->sendError('Ошибка при поиске билетов: ' . $e->getMessage());
@@ -408,6 +405,36 @@ class FlightSearchService
         }
 
         return $selected;
+    }
+
+    /**
+     * Keep only the single cheapest flight per destination, sorted by price.
+     *
+     * @param array $results
+     * @return array
+     */
+    protected function cheapestPerDestination(array $results): array
+    {
+        $byDestination = [];
+
+        foreach ($results as $flight) {
+            $destination = $flight['destination'] ?? null;
+            if ($destination === null) {
+                continue;
+            }
+
+            $current = $byDestination[$destination] ?? null;
+            if ($current === null || ($flight['price'] ?? PHP_INT_MAX) < ($current['price'] ?? PHP_INT_MAX)) {
+                $byDestination[$destination] = $flight;
+            }
+        }
+
+        $list = array_values($byDestination);
+        usort($list, function ($a, $b) {
+            return ($a['price'] ?? PHP_INT_MAX) <=> ($b['price'] ?? PHP_INT_MAX);
+        });
+
+        return $list;
     }
 
     /**
