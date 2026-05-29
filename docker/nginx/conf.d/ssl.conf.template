@@ -1,22 +1,23 @@
-# HTTPS server for production. NOT loaded until renamed to "ssl.conf"
-# (nginx only loads *.conf files), so local startup never needs a certificate.
+# HTTPS server for production (domain: flykend.com).
+# NOT loaded until renamed to "ssl.conf" (nginx only loads *.conf files),
+# so local startup never needs a certificate.
 #
 # Production setup:
-#   1. Point DNS: YOURDOMAIN.com (and www) -> server IP
-#   2. Make sure the HTTP server above is reachable on port 80
+#   1. Point DNS: flykend.com (and www) -> server IP (Cloudflare: "DNS only")
+#   2. Make sure the HTTP server (default.conf) is reachable on port 80
 #   3. Issue the certificate:
 #        docker compose run --rm certbot certonly --webroot -w /var/www/certbot \
-#          -d YOURDOMAIN.com -d www.YOURDOMAIN.com \
+#          -d flykend.com -d www.flykend.com \
 #          --email you@example.com --agree-tos --no-eff-email
-#   4. Replace YOURDOMAIN below, rename this file to ssl.conf, then:
+#   4. Rename this file to ssl.conf, then:
 #        docker compose restart web
 #   5. Renewal (cron on host, e.g. weekly):
 #        docker compose run --rm certbot renew && docker compose restart web
 
-# Redirect HTTP -> HTTPS for the real domain (ACME challenge still served above).
+# Redirect HTTP -> HTTPS (ACME challenge is still served by default.conf).
 server {
     listen 80;
-    server_name YOURDOMAIN.com www.YOURDOMAIN.com;
+    server_name flykend.com www.flykend.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -29,10 +30,10 @@ server {
 
 server {
     listen 443 ssl;
-    server_name YOURDOMAIN.com www.YOURDOMAIN.com;
+    server_name flykend.com www.flykend.com;
 
-    ssl_certificate     /etc/letsencrypt/live/YOURDOMAIN.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/YOURDOMAIN.com/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/flykend.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/flykend.com/privkey.pem;
 
     root /var/www/public;
 
