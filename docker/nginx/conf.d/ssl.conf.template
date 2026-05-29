@@ -2,28 +2,43 @@
 # (nginx only loads *.conf files), so local startup never needs a certificate.
 #
 # Production setup:
-#   1. Point DNS: api.YOURDOMAIN.com -> server IP
+#   1. Point DNS: YOURDOMAIN.com (and www) -> server IP
 #   2. Make sure the HTTP server above is reachable on port 80
 #   3. Issue the certificate:
 #        docker compose run --rm certbot certonly --webroot -w /var/www/certbot \
-#          -d api.YOURDOMAIN.com --email you@example.com --agree-tos --no-eff-email
+#          -d YOURDOMAIN.com -d www.YOURDOMAIN.com \
+#          --email you@example.com --agree-tos --no-eff-email
 #   4. Replace YOURDOMAIN below, rename this file to ssl.conf, then:
 #        docker compose restart web
 #   5. Renewal (cron on host, e.g. weekly):
 #        docker compose run --rm certbot renew && docker compose restart web
 
+# Redirect HTTP -> HTTPS for the real domain (ACME challenge still served above).
 server {
-    listen 443 ssl;
-    server_name api.YOURDOMAIN.com;
+    listen 80;
+    server_name YOURDOMAIN.com www.YOURDOMAIN.com;
 
-    ssl_certificate     /etc/letsencrypt/live/api.YOURDOMAIN.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/api.YOURDOMAIN.com/privkey.pem;
-
-    root /var/www/public;
-    index index.php;
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
 
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name YOURDOMAIN.com www.YOURDOMAIN.com;
+
+    ssl_certificate     /etc/letsencrypt/live/YOURDOMAIN.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/YOURDOMAIN.com/privkey.pem;
+
+    root /var/www/public;
+
+    # Laravel API -> php-fpm
+    location /api/ {
+        try_files $uri /index.php?$query_string;
     }
 
     location ~ \.php$ {
@@ -31,5 +46,14 @@ server {
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
+    }
+
+    # Everything else -> Next.js landing
+    location / {
+        proxy_pass http://landing:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }

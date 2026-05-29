@@ -36,6 +36,22 @@ services:
       - certbot-webroot:/var/www/certbot
     depends_on:
       - app
+      - landing
+    networks:
+      - flight-search-network
+
+  landing:
+    build:
+      context: ./landing
+      args:
+        NEXT_PUBLIC_SITE_URL: ${LANDING_SITE_URL:-http://localhost}
+        NEXT_PUBLIC_TELEGRAM_URL: ${LANDING_TELEGRAM_URL:-https://t.me/cheap_flights_search}
+    container_name: flight_search_landing
+    restart: unless-stopped
+    environment:
+      - API_FEED_URL=http://web/api/feed
+    depends_on:
+      - app
     networks:
       - flight-search-network
 
