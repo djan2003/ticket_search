@@ -22,6 +22,32 @@ services:
       - DB_USERNAME=${DB_USERNAME:-root}
       - DB_PASSWORD=${DB_PASSWORD:-secret}
 
+  web:
+    image: nginx:alpine
+    container_name: flight_search_web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/var/www/public:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    depends_on:
+      - app
+    networks:
+      - flight-search-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: flight_search_certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    networks:
+      - flight-search-network
+
   mysql:
     image: mysql:8.0
     container_name: flight_search_mysql
@@ -64,4 +90,8 @@ networks:
 
 volumes:
   mysql-data:
+    driver: local
+  certbot-etc:
+    driver: local
+  certbot-webroot:
     driver: local

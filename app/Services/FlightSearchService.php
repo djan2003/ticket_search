@@ -9,11 +9,13 @@ class FlightSearchService
 {
     protected AviasalesService $aviasalesService;
     protected TelegramService $telegramService;
+    protected FeedService $feedService;
 
-    public function __construct(AviasalesService $aviasalesService, TelegramService $telegramService)
+    public function __construct(AviasalesService $aviasalesService, TelegramService $telegramService, FeedService $feedService)
     {
         $this->aviasalesService = $aviasalesService;
         $this->telegramService = $telegramService;
+        $this->feedService = $feedService;
     }
 
     /**
@@ -362,6 +364,9 @@ class FlightSearchService
 
             // Cap to a few per destination so the list covers more cities
             $allResults = $this->limitPerDestination($allResults, 3, $limit);
+
+            // Persist for the public landing feed (reuses these results, no extra API calls)
+            $this->feedService->store($origin, $allResults);
 
             return $this->telegramService->sendFlightResults($allResults, $origin);
         } catch (\Exception $e) {

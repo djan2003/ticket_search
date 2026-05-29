@@ -1,0 +1,35 @@
+# HTTPS server for production. NOT loaded until renamed to "ssl.conf"
+# (nginx only loads *.conf files), so local startup never needs a certificate.
+#
+# Production setup:
+#   1. Point DNS: api.YOURDOMAIN.com -> server IP
+#   2. Make sure the HTTP server above is reachable on port 80
+#   3. Issue the certificate:
+#        docker compose run --rm certbot certonly --webroot -w /var/www/certbot \
+#          -d api.YOURDOMAIN.com --email you@example.com --agree-tos --no-eff-email
+#   4. Replace YOURDOMAIN below, rename this file to ssl.conf, then:
+#        docker compose restart web
+#   5. Renewal (cron on host, e.g. weekly):
+#        docker compose run --rm certbot renew && docker compose restart web
+
+server {
+    listen 443 ssl;
+    server_name api.YOURDOMAIN.com;
+
+    ssl_certificate     /etc/letsencrypt/live/api.YOURDOMAIN.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.YOURDOMAIN.com/privkey.pem;
+
+    root /var/www/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass app:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
