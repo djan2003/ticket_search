@@ -53,7 +53,12 @@ class FlightSearchService
             if (count($results) >= $limit * 2) {
                 break;
             }
-            
+
+            // Skip self-route (e.g. EVN is both an origin and a destination)
+            if ($destination === $origin) {
+                continue;
+            }
+
             $flights = $this->searchDestination(
                 $origin,
                 $destination,
@@ -350,14 +355,15 @@ class FlightSearchService
                 }
             }
             
-            // Sort by price and limit
+            // Sort by price
             usort($allResults, function ($a, $b) {
                 return ($a['price'] ?? PHP_INT_MAX) <=> ($b['price'] ?? PHP_INT_MAX);
             });
-            
-            $allResults = array_slice($allResults, 0, $limit);
-            
-            return $this->telegramService->sendFlightResults($allResults);
+
+            // Cap to a few per destination so the list covers more cities
+            $allResults = $this->limitPerDestination($allResults, 3, $limit);
+
+            return $this->telegramService->sendFlightResults($allResults, $origin);
         } catch (\Exception $e) {
             Log::error('Search and notify error', ['message' => $e->getMessage()]);
             $this->telegramService->sendError('Ошибка при поиске билетов: ' . $e->getMessage());
@@ -365,6 +371,66 @@ class FlightSearchService
         }
     }
     
+    /**
+     * Keep at most $maxPerDestination flights per destination, filling the
+     * remaining slots with the next cheapest flights to other destinations.
+     * Expects $results already sorted by price (cheapest first).
+     *
+     * @param array $results
+     * @param int $maxPerDestination
+     * @param int $limit
+     * @return array
+     */
+    protected function limitPerDestination(array $results, int $maxPerDestination, int $limit): array
+    {
+        $selected = [];
+        $countPerDestination = [];
+
+        foreach ($results as $flight) {
+            $destination = $flight['destination'] ?? null;
+            $count = $countPerDestination[$destination] ?? 0;
+
+            if ($count >= $maxPerDestination) {
+                continue;
+            }
+
+            $selected[] = $flight;
+            $countPerDestination[$destination] = $count + 1;
+
+            if (count($selected) >= $limit) {
+                break;
+            }
+        }
+
+        return $selected;
+    }
+
+    /**
+     * Search and notify for every configured origin city (multi-city)
+     *
+     * @param int|array $departureDays
+     * @param int|array $returnDays
+     * @param int $daysAhead
+     * @param int $limit
+     * @return bool
+     */
+    public function searchAndNotifyAllOrigins(
+        int|array $departureDays = 5,
+        int|array $returnDays = 0,
+        int $daysAhead = 90,
+        int $limit = 10
+    ): bool {
+        $origins = array_keys(config('airports.origins'));
+        $success = true;
+
+        foreach ($origins as $origin) {
+            $ok = $this->searchAndNotify($origin, $departureDays, $returnDays, $daysAhead, $limit);
+            $success = $success && $ok;
+        }
+
+        return $success;
+    }
+
     /**
      * Validate day combination based on weekend rules
      * 

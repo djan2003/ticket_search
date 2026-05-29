@@ -106,14 +106,12 @@ class TelegramListenCommand extends Command
         elseif ($text === '/search') {
             $this->telegramService->sendMessage("⏳ *Начинаю поиск билетов...*\nЭто займет 1-2 минуты. Пожалуйста, подождите.");
             
-            // Re-use logic from FlightSearchCommand
-            $origin = env('DEFAULT_ORIGIN', 'BUS');
+            // Re-use logic from FlightSearchCommand (search all configured origins)
             $depDay = env('DEFAULT_DEPARTURE_DAY', 5);
             $retDay = env('DEFAULT_RETURN_DAY', 0);
             $daysAhead = env('SEARCH_RANGE_DAYS', 90);
-            
-            $success = $this->flightService->searchAndNotify(
-                $origin,
+
+            $success = $this->flightService->searchAndNotifyAllOrigins(
                 $depDay,
                 $retDay,
                 $daysAhead,

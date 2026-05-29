@@ -13,7 +13,7 @@ class SearchFlightsCommand extends Command
      * @var string
      */
     protected $signature = 'flights:search
-                            {--origin=BUS : Origin airport IATA code}
+                            {--origin= : Origin airport IATA code (empty = all configured origins)}
                             {--departure-day=5 : Day of week for departure (0-6, where 0 is Sunday)}
                             {--return-day=0 : Day of week for return (0-6, where 0 is Sunday)}
                             {--days-ahead=90 : Number of days ahead to search}
@@ -58,7 +58,7 @@ class SearchFlightsCommand extends Command
         $limit = (int) $this->option('limit');
 
         $this->info("Parameters:");
-        $this->line("  Origin: {$origin}");
+        $this->line("  Origin: " . ($origin ?: 'all configured origins'));
         $this->line("  Departure days: Friday, Saturday");
         $this->line("  Return days: Sunday, Monday");
         $this->line("  Valid combinations:");
@@ -68,13 +68,22 @@ class SearchFlightsCommand extends Command
         $this->line("  Days ahead: {$daysAhead}");
         $this->line("  Limit: {$limit}");
 
-        $success = $this->searchService->searchAndNotify(
-            $origin,
-            $departureDays,
-            $returnDays,
-            $daysAhead,
-            $limit
-        );
+        if ($origin) {
+            $success = $this->searchService->searchAndNotify(
+                $origin,
+                $departureDays,
+                $returnDays,
+                $daysAhead,
+                $limit
+            );
+        } else {
+            $success = $this->searchService->searchAndNotifyAllOrigins(
+                $departureDays,
+                $returnDays,
+                $daysAhead,
+                $limit
+            );
+        }
 
         if ($success) {
             $this->info('✓ Search completed successfully! Results sent to Telegram.');

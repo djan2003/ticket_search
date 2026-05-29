@@ -29,13 +29,13 @@ class TelegramService
      * @param array $flights
      * @return bool
      */
-    public function sendFlightResults(array $flights): bool
+    public function sendFlightResults(array $flights, ?string $origin = null): bool
     {
         if (empty($flights)) {
             return $this->sendMessage("🔍 Поиск завершен. Билеты не найдены.");
         }
 
-        $message = $this->formatFlightResults($flights);
+        $message = $this->formatFlightResults($flights, $origin);
         $this->sendToChannel($message);
         return $this->sendMessage($message);
     }
@@ -71,9 +71,12 @@ class TelegramService
      * @param array $flights
      * @return string
      */
-    protected function formatFlightResults(array $flights): string
+    protected function formatFlightResults(array $flights, ?string $origin = null): string
     {
-        $message = "✈️ *Найдены авиабилеты*\n\n";
+        $originName = $origin ? config("airports.origins.{$origin}.name_ru") : null;
+        $message = $originName
+            ? "✈️ *Дешёвые билеты из {$originName}*\n\n"
+            : "✈️ *Найдены авиабилеты*\n\n";
 
         foreach ($flights as $index => $flight) {
             $number = $index + 1;
