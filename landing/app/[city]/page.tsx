@@ -10,8 +10,11 @@ import { FlightTable } from "../../components/FlightTable";
 import { TelegramCTA } from "../../components/TelegramCTA";
 import { Faq } from "../../components/Faq";
 import { Breadcrumbs } from "../../components/Breadcrumbs";
+import { PriceCalendar } from "../../components/PriceCalendar";
 import { formatPrice } from "../../lib/format";
 import { priceMetaDescription } from "../../lib/seo";
+import { getMonthlyPrices } from "../../lib/calendar";
+import { originName } from "../../lib/destinations";
 
 type Params = { params: Promise<{ city: string }> };
 
@@ -50,6 +53,10 @@ export default async function CityPage({ params }: Params) {
   const cheapest = flights[0];
   const year = new Date().getFullYear();
 
+  // Price-by-month chart for the origin with the cheapest current flight.
+  const calendarOrigin = cheapest?.origin ?? "BUS";
+  const monthlyPrices = await getMonthlyPrices(calendarOrigin, dest.iata);
+
   const others = DESTINATIONS.filter((d) => d.slug !== dest.slug).slice(0, 12);
 
   return (
@@ -85,6 +92,12 @@ export default async function CityPage({ params }: Params) {
           <FlightTable flights={flights} linkDestination={false} />
         </div>
       </section>
+
+      <PriceCalendar
+        data={monthlyPrices}
+        destinationName={dest.nameRu}
+        originName={originName(calendarOrigin)}
+      />
 
       <TelegramCTA />
 

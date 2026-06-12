@@ -17,4 +17,5 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('search', 'FlightSearchController@search');
     $router->get('countries', 'FlightSearchController@countries');
     $router->get('feed', 'FeedController@feed');
+    $router->get('calendar/{origin}/{destination}', 'CalendarController@calendar');
 });

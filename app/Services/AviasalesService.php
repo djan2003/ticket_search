@@ -70,6 +70,41 @@ class AviasalesService
     }
 
     /**
+     * Get the cheapest price for each month (price calendar) for a route.
+     * Uses the grouped_prices endpoint with group_by=month.
+     *
+     * @param string $origin Origin IATA code
+     * @param string $destination Destination IATA code
+     * @return array Map of "YYYY-MM" => ticket info (incl. price). Empty on error.
+     */
+    public function getMonthlyPrices(string $origin, string $destination): array
+    {
+        try {
+            $response = $this->client->get('aviasales/v3/grouped_prices', [
+                'query' => [
+                    'origin' => $origin,
+                    'destination' => $destination,
+                    'currency' => 'USD',
+                    'group_by' => 'month',
+                    'token' => $this->apiToken,
+                ],
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return $data['data'] ?? [];
+        } catch (GuzzleException $e) {
+            Log::error('Aviasales grouped_prices error', [
+                'message' => $e->getMessage(),
+                'origin' => $origin,
+                'destination' => $destination,
+            ]);
+
+            return [];
+        }
+    }
+
+    /**
      * Get cheapest ticket from search results
      *
      * @param array $searchResults
