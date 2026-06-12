@@ -17,7 +17,11 @@ export async function generateMetadata(): Promise<Metadata> {
     cheapest?.price ?? null,
     cheapest?.currency ?? "USD",
   );
-  return { description, openGraph: { description } };
+  return {
+    description,
+    alternates: { canonical: "/" },
+    openGraph: { description },
+  };
 }
 
 const STEPS = [

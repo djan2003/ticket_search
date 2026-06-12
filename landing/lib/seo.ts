@@ -1,6 +1,30 @@
 import { SITE } from "./site";
 import { formatPrice } from "./format";
 
+/** Site-wide Organization + WebSite schema (brand recognition, sitelinks). */
+export function siteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${SITE.url}/#organization`,
+        name: SITE.name,
+        url: SITE.url,
+        sameAs: [SITE.telegram],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE.url}/#website`,
+        name: SITE.name,
+        url: SITE.url,
+        inLanguage: "ru-RU",
+        publisher: { "@id": `${SITE.url}/#organization` },
+      },
+    ],
+  };
+}
+
 /** FAQPage schema for rich results (questions shown directly in search). */
 export function faqJsonLd(items: { q: string; a: string }[]) {
   return {
