@@ -15,6 +15,8 @@ export function TelegramCTA() {
         target="_blank"
         rel="noopener"
         className="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-sky-600 hover:bg-sky-50"
+        data-umami-event="telegram-click"
+        data-umami-event-source="cta"
       >
         Подписаться на канал
       </a>
