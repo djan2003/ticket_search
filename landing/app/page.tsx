@@ -1,12 +1,24 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getFeed, allFlights, cheapestPerDestination } from "../lib/feed";
 import { ORIGIN_LIST } from "../lib/destinations";
 import { FlightTable } from "../components/FlightTable";
 import { TelegramCTA } from "../components/TelegramCTA";
 import { Faq } from "../components/Faq";
+import { priceMetaDescription } from "../lib/seo";
 
 // Rendered on demand: reads the live feed each request (see lib/feed.ts).
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const cheapest = cheapestPerDestination(allFlights(await getFeed()))[0];
+  const description = priceMetaDescription(
+    "Ищете дешёвые авиабилеты на выходные из Батуми, Тбилиси и Еревана? Перелёты по безвизовым направлениям",
+    cheapest?.price ?? null,
+    cheapest?.currency ?? "USD",
+  );
+  return { description, openGraph: { description } };
+}
 
 const STEPS = [
   {
@@ -55,7 +67,7 @@ export default async function Home() {
       {/* Hero */}
       <section className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Дешёвые билеты на выходные из Батуми, Тбилиси и Еревана
+          Дешёвые авиабилеты на выходные из Батуми, Тбилиси и Еревана
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
           Находим самые низкие цены на короткие поездки по безвизовым
@@ -107,6 +119,28 @@ export default async function Home() {
         <div className="mt-6">
           <FlightTable flights={top} />
         </div>
+      </section>
+
+      {/* Local context — regional relevance & LSI */}
+      <section className="space-y-3 text-slate-600">
+        <h2 className="text-2xl font-bold text-slate-900">
+          Перелёты из Батуми, Тбилиси и Еревана
+        </h2>
+        <p>
+          Большинство дешёвых перелётов на выходные уходит из Международного
+          аэропорта Батуми (BUS) имени Александра Картвели, а также из аэропортов
+          Тбилиси (TBS) и Еревана (EVN). Чаще всего на этих направлениях летают
+          лоукостеры Wizz Air и Pegasus, а также Turkish Airlines — прямыми
+          рейсами или с короткой пересадкой в Стамбуле.
+        </p>
+        <p>
+          Мы отслеживаем только безвизовые направления для путешественников из
+          Грузии и Армении — Турцию, ОАЭ, Среднюю Азию, Юго-Восточную Азию и
+          другие страны, куда можно улететь на выходные без оформления визы
+          заранее. Цены на авиабилеты меняются в реальном времени, поэтому
+          таблица обновляется каждый день, а самые выгодные предложения дублируются
+          в Telegram-канале.
+        </p>
       </section>
 
       <TelegramCTA />

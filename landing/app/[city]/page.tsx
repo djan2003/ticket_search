@@ -9,7 +9,9 @@ import { getFeed, allFlights, flightsToDestination } from "../../lib/feed";
 import { FlightTable } from "../../components/FlightTable";
 import { TelegramCTA } from "../../components/TelegramCTA";
 import { Faq } from "../../components/Faq";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 import { formatPrice } from "../../lib/format";
+import { priceMetaDescription } from "../../lib/seo";
 
 type Params = { params: Promise<{ city: string }> };
 
@@ -22,8 +24,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!dest) return {};
 
   const year = new Date().getFullYear();
-  const title = `Дешёвые билеты в ${dest.nameRu} из Батуми, Тбилиси и Еревана ${year}`;
-  const description = `Самые низкие цены на авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из Батуми, Тбилиси и Еревана: вылет в пятницу/субботу, возврат в воскресенье/понедельник. Обновляется ежедневно.`;
+  const title = `Дешёвые авиабилеты в ${dest.nameRu} из Батуми, Тбилиси и Еревана ${year}`;
+  const cheapest = flightsToDestination(allFlights(await getFeed()), dest.iata)[0];
+  const description = priceMetaDescription(
+    `Дешёвые авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из Батуми, Тбилиси и Еревана`,
+    cheapest?.price ?? null,
+    cheapest?.currency ?? "USD",
+  );
 
   return {
     title,
@@ -47,16 +54,16 @@ export default async function CityPage({ params }: Params) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 space-y-12">
-      <nav className="text-sm text-slate-500">
-        <Link href="/" className="hover:underline">
-          Главная
-        </Link>{" "}
-        / {dest.nameRu}
-      </nav>
+      <Breadcrumbs
+        items={[
+          { name: "Главная", path: "/" },
+          { name: dest.nameRu, path: `/${dest.slug}` },
+        ]}
+      />
 
       <section>
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Билеты в {dest.nameRu} на выходные {year}
+          Авиабилеты в {dest.nameRu} на выходные {year}
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           {dest.blurb} Ищем самые дешёвые билеты в {dest.nameRu} (

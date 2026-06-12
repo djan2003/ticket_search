@@ -10,7 +10,9 @@ import {
 import { FlightTable } from "../../../components/FlightTable";
 import { TelegramCTA } from "../../../components/TelegramCTA";
 import { Faq } from "../../../components/Faq";
+import { Breadcrumbs } from "../../../components/Breadcrumbs";
 import { formatPrice } from "../../../lib/format";
+import { priceMetaDescription } from "../../../lib/seo";
 
 type Params = { params: Promise<{ origin: string }> };
 
@@ -23,8 +25,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!city) return {};
 
   const year = new Date().getFullYear();
-  const title = `Дешёвые билеты из ${city.nameRu} ${year}`;
-  const description = `Самые низкие цены на авиабилеты из ${city.nameRu} на выходные по безвизовым направлениям: вылет в пятницу/субботу, возврат в воскресенье/понедельник. Обновляется каждый день.`;
+  const title = `Дешёвые авиабилеты из ${city.nameRu} на выходные ${year}`;
+  const cheapest = cheapestPerDestination(
+    flightsFromOrigin(await getFeed(), city.iata),
+  )[0];
+  const description = priceMetaDescription(
+    `Дешёвые авиабилеты из ${city.nameRu} на выходные по безвизовым направлениям`,
+    cheapest?.price ?? null,
+    cheapest?.currency ?? "USD",
+  );
 
   return {
     title,
@@ -48,16 +57,16 @@ export default async function OriginPage({ params }: Params) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 space-y-12">
-      <nav className="text-sm text-slate-500">
-        <Link href="/" className="hover:underline">
-          Главная
-        </Link>{" "}
-        / Из {city.nameRu}
-      </nav>
+      <Breadcrumbs
+        items={[
+          { name: "Главная", path: "/" },
+          { name: `Из ${city.nameRu}`, path: `/from/${city.slug}` },
+        ]}
+      />
 
       <section>
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Билеты из {city.nameRu} на выходные {year}
+          Авиабилеты из {city.nameRu} на выходные {year}
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           Самые низкие цены на короткие поездки из {city.nameRu}: вылет в

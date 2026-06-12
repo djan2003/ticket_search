@@ -6,6 +6,7 @@ import {
   destinationByIata,
 } from "../lib/destinations";
 import { formatPrice, formatDate, stopsLabel } from "../lib/format";
+import { airlineName } from "../lib/airlines";
 
 export function FlightTable({
   flights,
@@ -29,6 +30,7 @@ export function FlightTable({
         <thead className="bg-slate-50 text-left text-slate-500">
           <tr>
             <th className="px-4 py-3 font-medium">Маршрут</th>
+            <th className="px-4 py-3 font-medium">Авиакомпания</th>
             <th className="px-4 py-3 font-medium">Даты</th>
             <th className="px-4 py-3 font-medium">Пересадки</th>
             <th className="px-4 py-3 font-medium">Цена</th>
@@ -52,6 +54,9 @@ export function FlightTable({
                   ) : (
                     destinationName(f.destination)
                   )}
+                </td>
+                <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                  {airlineName(f.airline)}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-slate-600">
                   {formatDate(f.departure_date)} — {formatDate(f.return_date)}
