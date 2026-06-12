@@ -47,7 +47,7 @@ services:
       args:
         NEXT_PUBLIC_SITE_URL: ${LANDING_SITE_URL:-https://flykend.com}
         NEXT_PUBLIC_TELEGRAM_URL: ${LANDING_TELEGRAM_URL:-https://t.me/cheap_flights_search}
-        NEXT_PUBLIC_UMAMI_SRC: ${LANDING_UMAMI_SRC:-https://flykend.com/stats/script.js}
+        NEXT_PUBLIC_UMAMI_SRC: ${LANDING_UMAMI_SRC:-https://analytics.flykend.com/script.js}
         NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${LANDING_UMAMI_WEBSITE_ID:-}
     container_name: flight_search_landing
     restart: unless-stopped
@@ -67,7 +67,7 @@ services:
     networks:
       - flight-search-network
 
-  # Self-hosted web analytics, served behind nginx at /stats (BASE_PATH).
+  # Self-hosted web analytics, served on the analytics.flykend.com subdomain.
   umami:
     image: ghcr.io/umami-software/umami:postgresql-latest
     container_name: flight_search_umami
@@ -76,7 +76,6 @@ services:
       DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:-umami_secret}@umami-db:5432/umami
       DATABASE_TYPE: postgresql
       APP_SECRET: ${UMAMI_APP_SECRET:-please_change_this_secret}
-      BASE_PATH: /stats
     depends_on:
       umami-db:
         condition: service_healthy

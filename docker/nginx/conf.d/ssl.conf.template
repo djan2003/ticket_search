@@ -49,18 +49,40 @@ server {
         include fastcgi_params;
     }
 
-    # Umami analytics (BASE_PATH=/stats)
-    location /stats {
-        proxy_pass http://umami:3000;
+    # Everything else -> Next.js landing
+    location / {
+        proxy_pass http://landing:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
+}
 
-    # Everything else -> Next.js landing
+# Redirect HTTP -> HTTPS for the analytics subdomain.
+server {
+    listen 80;
+    server_name analytics.flykend.com;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
     location / {
-        proxy_pass http://landing:3000;
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Umami analytics on its own subdomain.
+server {
+    listen 443 ssl;
+    server_name analytics.flykend.com;
+
+    ssl_certificate     /etc/letsencrypt/live/flykend.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/flykend.com/privkey.pem;
+
+    location / {
+        proxy_pass http://umami:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
