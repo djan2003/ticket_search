@@ -11,9 +11,12 @@ class TelegramService
     protected Api $telegram;
     protected string $chatId;
     protected ?string $channelId;
+    protected SubscriberService $subscribers;
 
-    public function __construct()
+    public function __construct(SubscriberService $subscribers)
     {
+        $this->subscribers = $subscribers;
+
         try {
             $this->telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
             $this->chatId = env('TELEGRAM_CHAT_ID');
@@ -36,8 +39,72 @@ class TelegramService
         }
 
         $message = $this->formatFlightResults($flights, $origin);
-        $this->sendToChannel($message);
+
+        if (!$origin || config("airports.origins.{$origin}.channel")) {
+            $this->sendToChannel($message);
+        }
+
+        if ($origin) {
+            foreach ($this->subscribers->forOrigin($origin) as $chatId) {
+                $this->sendTo($chatId, $message);
+            }
+        }
+
         return $this->sendMessage($message);
+    }
+
+    /**
+     * Send the given flights from one origin to a single chat.
+     *
+     * @param string $chatId
+     * @param array $flights
+     * @param string $origin
+     * @return bool
+     */
+    public function sendFlightsTo(string $chatId, array $flights, string $origin): bool
+    {
+        return $this->sendTo($chatId, $this->formatFlightResults($flights, $origin));
+    }
+
+    /**
+     * Send a message to an arbitrary chat (bot subscribers).
+     * A chat that blocked the bot is unsubscribed.
+     *
+     * @param string $chatId
+     * @param string $message
+     * @param array|null $keyboard Rows of button labels for a reply keyboard
+     * @return bool
+     */
+    public function sendTo(string $chatId, string $message, ?array $keyboard = null): bool
+    {
+        $params = [
+            'chat_id' => $chatId,
+            'text' => $message,
+            'parse_mode' => 'Markdown',
+        ];
+
+        if ($keyboard !== null) {
+            $params['reply_markup'] = json_encode([
+                'keyboard' => $keyboard,
+                'resize_keyboard' => true,
+            ]);
+        }
+
+        try {
+            $this->telegram->sendMessage($params);
+            return true;
+        } catch (TelegramSDKException $e) {
+            Log::error('Telegram send error', [
+                'message' => $e->getMessage(),
+                'chat_id' => $chatId,
+            ]);
+
+            if ($e->getCode() === 403) {
+                $this->subscribers->unsubscribe($chatId);
+            }
+
+            return false;
+        }
     }
 
     public function sendToChannel(string $message): bool

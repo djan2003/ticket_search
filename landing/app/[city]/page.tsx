@@ -36,7 +36,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     origins.length <= 4
       ? `Дешёвые авиабилеты в ${dest.nameRu} из ${from} ${year}`
       : `Дешёвые авиабилеты в ${dest.nameRu} на выходные ${year}`;
-  const cheapest = flightsToDestination(allFlights(await getFeed()), dest.iata)[0];
+  const all = allFlights(await getFeed());
+  const cheapest = flightsToDestination(all, dest.iata)[0];
   const description = priceMetaDescription(
     `Дешёвые авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из ${from}`,
     cheapest?.price ?? null,
@@ -48,6 +49,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description,
     alternates: { canonical: `/${dest.slug}` },
     openGraph: { title, description },
+    // No flights to this destination right now: keep the placeholder out of
+    // search. (An entirely empty feed means the fetch failed, not that the
+    // page is empty.)
+    ...(!cheapest && all.length > 0
+      ? { robots: { index: false, follow: true } }
+      : {}),
   };
 }
 

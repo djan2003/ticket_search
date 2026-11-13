@@ -36,14 +36,14 @@ export default function RootLayout({
               ✈️ {SITE.name}
             </Link>
             <a
-              href={SITE.telegram}
+              href={SITE.bot}
               target="_blank"
               rel="noopener"
               className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-600"
               data-umami-event="telegram-click"
               data-umami-event-source="header"
             >
-              Telegram-канал
+              Подписаться в Telegram
             </a>
           </div>
         </header>
@@ -54,7 +54,7 @@ export default function RootLayout({
           <div className="mx-auto max-w-5xl px-4 py-6 text-sm text-slate-500">
             <p>
               {SITE.name} — находим дешёвые авиабилеты на выходные по безвизовым
-              направлениям из Батуми, Тбилиси и Еревана.
+              направлениям.
             </p>
             <p className="mt-1">
               Цены носят справочный характер и могут меняться. Покупка — на

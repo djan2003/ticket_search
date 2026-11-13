@@ -18,8 +18,8 @@ export function FlightTable({
   if (flights.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-slate-500">
-        Цены обновляются. Загляните в Telegram-канал — там свежие билеты каждый
-        день.
+        Сейчас подходящих билетов на выходные нет. Цены обновляются каждый
+        день — загляните позже.
       </p>
     );
   }

@@ -8,6 +8,6 @@ export const alt = SITE.title;
 export default function Image() {
   return renderOgImage(
     "Дешёвые авиабилеты на выходные",
-    "из Батуми, Тбилиси и Еревана",
+    "по безвизовым направлениям",
   );
 }

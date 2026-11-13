@@ -8,6 +8,7 @@ import {
 } from "../../../lib/destinations";
 import {
   getFeed,
+  allFlights,
   flightsFromOrigin,
   cheapestPerDestination,
 } from "../../../lib/feed";
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const year = new Date().getFullYear();
   const title = `Дешёвые авиабилеты из ${city.nameGen} на выходные ${year}`;
+  const feed = await getFeed();
   const cheapest = cheapestPerDestination(
-    flightsFromOrigin(await getFeed(), city.iata),
+    flightsFromOrigin(feed, city.iata),
   )[0];
   const description = priceMetaDescription(
     `Дешёвые авиабилеты из ${city.nameGen} на выходные по безвизовым направлениям`,
@@ -44,6 +46,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description,
     alternates: { canonical: `/from/${city.slug}` },
     openGraph: { title, description },
+    // No flights for this city yet: keep the placeholder out of search.
+    // (An entirely empty feed means the fetch failed, not that the page is empty.)
+    ...(!cheapest && allFlights(feed).length > 0
+      ? { robots: { index: false, follow: true } }
+      : {}),
   };
 }
 
@@ -111,7 +118,7 @@ export default async function OriginPage({ params }: Params) {
         </div>
       </section>
 
-      <TelegramCTA />
+      <TelegramCTA origin={city} />
 
       <section>
         <h2 className="text-2xl font-bold">Частые вопросы</h2>
@@ -126,7 +133,7 @@ export default async function OriginPage({ params }: Params) {
               },
               {
                 q: "Как часто обновляются цены?",
-                a: "Раз в день. Самые свежие предложения всегда в Telegram-канале.",
+                a: `Раз в день. Подборку из ${city.nameGen} можно получать в Telegram-боте — кнопка выше.`,
               },
               {
                 q: "Это бесплатно?",

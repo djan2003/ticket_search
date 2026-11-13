@@ -48,7 +48,7 @@ class AviasalesService
                 $params['return_at'] = $returnDate;
             }
 
-            Log::info('Aviasales API Request', $params);
+            Log::info('Aviasales API Request', array_diff_key($params, ['token' => true]));
 
             try {
                 $response = $this->client->get('aviasales/v3/prices_for_dates', [
@@ -73,7 +73,7 @@ class AviasalesService
             return $data;
         } catch (GuzzleException $e) {
             Log::error('Aviasales API Error', [
-                'message' => $e->getMessage(),
+                'message' => str_replace($this->apiToken, '***', $e->getMessage()),
                 'origin' => $origin,
                 'destination' => $destination,
             ]);
@@ -108,7 +108,7 @@ class AviasalesService
             return $data['data'] ?? [];
         } catch (GuzzleException $e) {
             Log::error('Aviasales grouped_prices error', [
-                'message' => $e->getMessage(),
+                'message' => str_replace($this->apiToken, '***', $e->getMessage()),
                 'origin' => $origin,
                 'destination' => $destination,
             ]);
