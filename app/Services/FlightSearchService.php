@@ -44,8 +44,8 @@ class FlightSearchService
             'return_day' => $returnDayOfWeek,
         ]);
 
-        // Get all destination cities (limit to 1 per country for speed)
-        $destinations = $this->getDestinationCities($countries, 1);
+        // Get all destination cities (every city of every country, so each landing page has data)
+        $destinations = $this->getDestinationCities($countries);
         
         // Limit search to first 4 weeks only (instead of 90 days) for speed
         $searchDays = min($daysAhead, 28);

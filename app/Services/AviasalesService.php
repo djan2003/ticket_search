@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 
@@ -49,9 +50,21 @@ class AviasalesService
 
             Log::info('Aviasales API Request', $params);
 
-            $response = $this->client->get('aviasales/v3/prices_for_dates', [
-                'query' => $params,
-            ]);
+            try {
+                $response = $this->client->get('aviasales/v3/prices_for_dates', [
+                    'query' => $params,
+                ]);
+            } catch (ClientException $e) {
+                if ($e->getResponse()->getStatusCode() !== 429) {
+                    throw $e;
+                }
+
+                // Rate limited: wait and retry once
+                sleep(5);
+                $response = $this->client->get('aviasales/v3/prices_for_dates', [
+                    'query' => $params,
+                ]);
+            }
 
             $data = json_decode($response->getBody()->getContents(), true);
             

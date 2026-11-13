@@ -22,15 +22,15 @@ return [
         ],
         'KZ' => [
             'name' => 'Kazakhstan',
-            'cities' => ['ALA', 'TSE', 'GUW'], // Almaty, Astana, Atyrau
+            'cities' => ['ALA', 'NQZ', 'GUW'], // Almaty, Astana, Atyrau
         ],
         'KG' => [
             'name' => 'Kyrgyzstan',
-            'cities' => ['FRU', 'OSS'], // Bishkek, Osh
+            'cities' => ['BSZ', 'OSS'], // Bishkek, Osh
         ],
         'MD' => [
             'name' => 'Moldova',
-            'cities' => ['KIV'], // Chisinau
+            'cities' => ['RMO'], // Chisinau
         ],
         'TJ' => [
             'name' => 'Tajikistan',
