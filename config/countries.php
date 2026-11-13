@@ -20,6 +20,10 @@ return [
 
     'visa_free' => [
         'RU' => [
+            // Checked 13.11.2026 against the Russian MFA consular table
+            // https://www.kdmid.ru/info-for-traveling-abroad/reference-information-for-traveling-abroad/list-of-countries-with-simplified-entry/
+            // Deliberately absent: Israel (paid ETA-IL before travel), Indonesia (visa on
+            // arrival), Moldova (visa-free on paper, frequent refusals at the border).
             'AM' => [
                 'name' => 'Armenia',
                 'cities' => ['EVN'], // Yerevan
@@ -35,10 +39,6 @@ return [
             'KG' => [
                 'name' => 'Kyrgyzstan',
                 'cities' => ['BSZ', 'OSS'], // Bishkek, Osh
-            ],
-            'MD' => [
-                'name' => 'Moldova',
-                'cities' => ['RMO'], // Chisinau
             ],
             'TJ' => [
                 'name' => 'Tajikistan',
@@ -68,10 +68,6 @@ return [
                 'name' => 'United Arab Emirates',
                 'cities' => ['DXB', 'AUH'], // Dubai, Abu Dhabi
             ],
-            'IL' => [
-                'name' => 'Israel',
-                'cities' => ['TLV'], // Tel Aviv
-            ],
             'MA' => [
                 'name' => 'Morocco',
                 'cities' => ['CMN', 'RAK'], // Casablanca, Marrakech
@@ -88,9 +84,33 @@ return [
                 'name' => 'Vietnam',
                 'cities' => ['HAN', 'SGN'], // Hanoi, Ho Chi Minh
             ],
-            'ID' => [
-                'name' => 'Indonesia',
-                'cities' => ['CGK', 'DPS'], // Jakarta, Bali
+            'GE' => [
+                'name' => 'Georgia',
+                'cities' => ['TBS', 'KUT'], // Tbilisi, Kutaisi
+            ],
+            'AZ' => [
+                'name' => 'Azerbaijan',
+                'cities' => ['GYD'], // Baku
+            ],
+            'JO' => [
+                'name' => 'Jordan',
+                'cities' => ['AMM'], // Amman
+            ],
+            'QA' => [
+                'name' => 'Qatar',
+                'cities' => ['DOH'], // Doha
+            ],
+            'OM' => [
+                'name' => 'Oman',
+                'cities' => ['MCT'], // Muscat
+            ],
+            'MY' => [
+                'name' => 'Malaysia',
+                'cities' => ['KUL'], // Kuala Lumpur
+            ],
+            'HK' => [
+                'name' => 'Hong Kong',
+                'cities' => ['HKG'], // Hong Kong
             ],
         ],
         'KZ' => [

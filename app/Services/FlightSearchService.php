@@ -40,6 +40,10 @@ class FlightSearchService
         $results = [];
         $countries = config("countries.visa_free.{$passport}");
 
+        // No domestic flights: skip the origin's own country
+        $originCountry = config("airports.origins.{$origin}.country");
+        $countries = array_filter($countries, fn ($country) => $country['name'] !== $originCountry);
+
         Log::info('Starting visa-free search', [
             'origin' => $origin,
             'departure_day' => $departureDayOfWeek,

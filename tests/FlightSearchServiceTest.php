@@ -31,6 +31,10 @@ class FlightSearchServiceTest extends TestCase
 
         $expected = [];
         foreach (config('countries.visa_free.RU') as $country) {
+            // Batumi is in Georgia: domestic destinations are not searched
+            if ($country['name'] === 'Georgia') {
+                continue;
+            }
             $expected = array_merge($expected, $country['cities']);
         }
         sort($expected);
@@ -39,6 +43,8 @@ class FlightSearchServiceTest extends TestCase
         sort($actual);
 
         $this->assertSame($expected, $actual);
+        $this->assertNotContains('TBS', $actual);
+        $this->assertContains('SAW', $actual);
     }
 
     public function test_origin_searches_the_visa_free_list_of_its_passport_and_tags_the_feed()
