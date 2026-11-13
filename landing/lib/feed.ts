@@ -1,4 +1,5 @@
 import type { Feed, Flight } from "./types";
+import { destinationByIata } from "./destinations";
 
 /**
  * Fetch the feed from the backend. Read fresh on each request (no-store):
@@ -20,12 +21,18 @@ export async function getFeed(): Promise<Feed> {
   }
 }
 
+// A destination removed from the list must disappear from the site at once,
+// even while the stored feed still has yesterday's flights to it.
+function listed(flights: Flight[]): Flight[] {
+  return flights.filter((f) => destinationByIata(f.destination));
+}
+
 export function allFlights(feed: Feed): Flight[] {
-  return Object.values(feed).flatMap((o) => o?.results ?? []);
+  return listed(Object.values(feed).flatMap((o) => o?.results ?? []));
 }
 
 export function flightsFromOrigin(feed: Feed, origin: string): Flight[] {
-  return feed[origin]?.results ?? [];
+  return listed(feed[origin]?.results ?? []);
 }
 
 /** Cheapest flight per destination, sorted by price ascending. */
