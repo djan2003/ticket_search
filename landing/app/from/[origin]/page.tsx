@@ -29,12 +29,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!city) return {};
 
   const year = new Date().getFullYear();
-  const title = `Дешёвые авиабилеты из ${city.nameRu} на выходные ${year}`;
+  const title = `Дешёвые авиабилеты из ${city.nameGen} на выходные ${year}`;
   const cheapest = cheapestPerDestination(
     flightsFromOrigin(await getFeed(), city.iata),
   )[0];
   const description = priceMetaDescription(
-    `Дешёвые авиабилеты из ${city.nameRu} на выходные по безвизовым направлениям`,
+    `Дешёвые авиабилеты из ${city.nameGen} на выходные по безвизовым направлениям`,
     cheapest?.price ?? null,
     cheapest?.currency ?? "USD",
   );
@@ -64,16 +64,16 @@ export default async function OriginPage({ params }: Params) {
       <Breadcrumbs
         items={[
           { name: "Главная", path: "/" },
-          { name: `Из ${city.nameRu}`, path: `/from/${city.slug}` },
+          { name: `Из ${city.nameGen}`, path: `/from/${city.slug}` },
         ]}
       />
 
       <section>
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Авиабилеты из {city.nameRu} на выходные {year}
+          Авиабилеты из {city.nameGen} на выходные {year}
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
-          Самые низкие цены на короткие поездки из {city.nameRu}: вылет в
+          Самые низкие цены на короткие поездки из {city.nameGen}: вылет в
           пятницу или субботу, возврат в воскресенье или понедельник. Только
           рейсы из вашего города — без лишнего. Направления — безвизовые для
           паспорта {PASSPORT_NAMES[city.passport]}. Обновляем каждый день.
@@ -101,7 +101,7 @@ export default async function OriginPage({ params }: Params) {
 
       <section>
         <h2 className="text-2xl font-bold">
-          Куда улететь из {city.nameRu} на выходные
+          Куда улететь из {city.nameGen} на выходные
         </h2>
         <p className="mt-1 text-slate-600">
           Самая низкая цена по каждому направлению.
@@ -120,7 +120,7 @@ export default async function OriginPage({ params }: Params) {
             items={[
               {
                 q: `Откуда вылеты?`,
-                a: `На этой странице — только рейсы из ${city.nameRu}. Билеты из других городов смотрите на отдельных страницах: ${otherOrigins
+                a: `На этой странице — только рейсы из ${city.nameGen}. Билеты из других городов смотрите на отдельных страницах: ${otherOrigins
                   .map((o) => o.nameRu)
                   .join(", ")}.`,
               },

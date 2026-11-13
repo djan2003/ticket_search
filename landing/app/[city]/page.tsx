@@ -30,8 +30,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!dest) return {};
 
   const year = new Date().getFullYear();
-  const from = joinRu(originsForDestination(dest).map((o) => o.nameGen));
-  const title = `Дешёвые авиабилеты в ${dest.nameRu} из ${from} ${year}`;
+  const origins = originsForDestination(dest);
+  const from = joinRu(origins.map((o) => o.nameGen));
+  const title =
+    origins.length <= 4
+      ? `Дешёвые авиабилеты в ${dest.nameRu} из ${from} ${year}`
+      : `Дешёвые авиабилеты в ${dest.nameRu} на выходные ${year}`;
   const cheapest = flightsToDestination(allFlights(await getFeed()), dest.iata)[0];
   const description = priceMetaDescription(
     `Дешёвые авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из ${from}`,

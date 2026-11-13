@@ -4,6 +4,9 @@ export const ORIGINS: Record<string, string> = {
   TBS: "Тбилиси",
   EVN: "Ереван",
   ALA: "Алматы",
+  NQZ: "Астана",
+  MOW: "Москва",
+  LED: "Санкт-Петербург",
 };
 
 // Passport whose visa-free list is searched (mirrors config/countries.php)
@@ -108,6 +111,9 @@ export const ORIGIN_LIST: Origin[] = [
   { iata: "TBS", slug: "tbilisi", nameRu: "Тбилиси", nameGen: "Тбилиси", passport: "RU" },
   { iata: "EVN", slug: "yerevan", nameRu: "Ереван", nameGen: "Еревана", passport: "RU" },
   { iata: "ALA", slug: "almaty", nameRu: "Алматы", nameGen: "Алматы", passport: "KZ" },
+  { iata: "NQZ", slug: "astana", nameRu: "Астана", nameGen: "Астаны", passport: "KZ" },
+  { iata: "MOW", slug: "moscow", nameRu: "Москва", nameGen: "Москвы", passport: "RU" },
+  { iata: "LED", slug: "saint-petersburg", nameRu: "Санкт-Петербург", nameGen: "Санкт-Петербурга", passport: "RU" },
 ];
 
 /** Origin cities that have flights searched to this destination. */

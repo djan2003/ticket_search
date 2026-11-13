@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFeed, allFlights, cheapestPerDestination } from "../lib/feed";
-import { ORIGIN_LIST } from "../lib/destinations";
+import { ORIGIN_LIST, PASSPORT_NAMES, joinRu } from "../lib/destinations";
 import { FlightTable } from "../components/FlightTable";
 import { TelegramCTA } from "../components/TelegramCTA";
 import { Faq } from "../components/Faq";
@@ -50,7 +50,12 @@ const FAQ = [
   },
   {
     q: "Из каких городов ищете билеты?",
-    a: "Сейчас это Батуми (BUS), Тбилиси (TBS), Ереван (EVN) и Алматы (ALA). Из Батуми, Тбилиси и Еревана — направления, безвизовые для паспорта России; из Алматы — для паспорта Казахстана.",
+    a: (["RU", "KZ"] as const)
+      .map(
+        (p) =>
+          `Из ${joinRu(ORIGIN_LIST.filter((o) => o.passport === p).map((o) => o.nameGen))} — направления, безвизовые для паспорта ${PASSPORT_NAMES[p]}.`,
+      )
+      .join(" "),
   },
   {
     q: "Почему только на выходные?",
@@ -89,7 +94,7 @@ export default async function Home() {
               href={`/from/${o.slug}`}
               className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
             >
-              Из {o.nameRu}
+              Из {o.nameGen}
             </Link>
           ))}
         </div>

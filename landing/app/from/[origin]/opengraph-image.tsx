@@ -18,7 +18,7 @@ export default async function Image({
   const { origin } = await params;
   const city = originBySlug(origin);
   return renderOgImage(
-    `Авиабилеты из ${city?.nameRu ?? "города"}`,
+    `Авиабилеты из ${city?.nameGen ?? "города"}`,
     "на выходные · по безвизовым направлениям",
   );
 }

@@ -22,11 +22,11 @@ export default async function Image({
 }) {
   const { city } = await params;
   const dest = destinationBySlug(city);
-  const from = dest
-    ? joinRu(originsForDestination(dest).map((o) => o.nameGen))
-    : "";
+  const origins = dest ? originsForDestination(dest) : [];
   return renderOgImage(
     `Авиабилеты в ${dest?.nameRu ?? "город"}`,
-    `на выходные · из ${from}`,
+    origins.length <= 4
+      ? `на выходные · из ${joinRu(origins.map((o) => o.nameGen))}`
+      : "на выходные · без визы",
   );
 }
