@@ -22,7 +22,7 @@ export function TelegramCTA({ origin }: { origin?: Origin }) {
         data-umami-event="telegram-click"
         data-umami-event-source={origin ? `cta-${origin.slug}` : "cta"}
       >
-        {origin ? `Подписаться на ${origin.nameRu}` : "Выбрать город в Telegram"}
+        {origin ? "Подписаться в Telegram" : "Выбрать город в Telegram"}
       </a>
     </section>
   );
