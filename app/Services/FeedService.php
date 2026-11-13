@@ -20,14 +20,16 @@ class FeedService
      *
      * @param string $origin
      * @param array $results
+     * @param string $passport Passport the results are visa-free for
      * @return void
      */
-    public function store(string $origin, array $results): void
+    public function store(string $origin, array $results, string $passport): void
     {
         $feed = $this->read();
 
         $feed[$origin] = [
             'generated_at' => date('c'),
+            'passport' => $passport,
             'results' => array_values($results),
         ];
 

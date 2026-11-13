@@ -1,5 +1,10 @@
 import { renderOgImage, OG_SIZE, OG_CONTENT_TYPE } from "../../lib/og";
-import { DESTINATIONS, destinationBySlug } from "../../lib/destinations";
+import {
+  DESTINATIONS,
+  destinationBySlug,
+  joinRu,
+  originsForDestination,
+} from "../../lib/destinations";
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
@@ -17,8 +22,11 @@ export default async function Image({
 }) {
   const { city } = await params;
   const dest = destinationBySlug(city);
+  const from = dest
+    ? joinRu(originsForDestination(dest).map((o) => o.nameGen))
+    : "";
   return renderOgImage(
     `Авиабилеты в ${dest?.nameRu ?? "город"}`,
-    "на выходные · из Батуми, Тбилиси и Еревана",
+    `на выходные · из ${from}`,
   );
 }

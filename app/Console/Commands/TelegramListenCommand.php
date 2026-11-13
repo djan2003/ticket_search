@@ -96,7 +96,7 @@ class TelegramListenCommand extends Command
             $this->telegramService->sendMessage("🏓 Понг! Бот на связи и готов искать билеты.\n\nКоманды:\n/search — Запустить поиск билетов прямо сейчас\n/countries — Показать список стран для поиска");
         } 
         elseif ($text === '/countries') {
-            $countries = config('countries.visa_free');
+            $countries = config('countries.visa_free.RU');
             $list = "📌 *Список стран для поиска:*\n\n";
             foreach ($countries as $code => $data) {
                 $list .= "- {$data['name']} (" . implode(', ', $data['cities']) . ")\n";

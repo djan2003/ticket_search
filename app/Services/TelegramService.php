@@ -78,6 +78,11 @@ class TelegramService
             ? "✈️ *Дешёвые билеты из {$originName}*\n\n"
             : "✈️ *Найдены авиабилеты*\n\n";
 
+        $passport = $origin ? config("airports.origins.{$origin}.passport") : null;
+        if ($passport) {
+            $message .= "🛂 Без визы для паспорта " . config("countries.passports.{$passport}") . "\n\n";
+        }
+
         foreach ($flights as $index => $flight) {
             $number = $index + 1;
             $origin = $flight['origin'] ?? 'N/A';

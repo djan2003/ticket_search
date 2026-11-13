@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ORIGIN_LIST, originBySlug } from "../../../lib/destinations";
+import {
+  ORIGIN_LIST,
+  PASSPORT_NAMES,
+  originBySlug,
+} from "../../../lib/destinations";
 import {
   getFeed,
   flightsFromOrigin,
@@ -71,7 +75,8 @@ export default async function OriginPage({ params }: Params) {
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           Самые низкие цены на короткие поездки из {city.nameRu}: вылет в
           пятницу или субботу, возврат в воскресенье или понедельник. Только
-          рейсы из вашего города — без лишнего. Обновляем каждый день.
+          рейсы из вашего города — без лишнего. Направления — безвизовые для
+          паспорта {PASSPORT_NAMES[city.passport]}. Обновляем каждый день.
         </p>
         {cheapest && (
           <p className="mt-4 inline-block rounded-lg bg-emerald-50 px-4 py-2 font-semibold text-emerald-700">

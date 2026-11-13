@@ -86,7 +86,7 @@ class FlightSearchController extends Controller
      */
     public function countries(): JsonResponse
     {
-        $countries = config('countries.visa_free');
+        $countries = config('countries.visa_free.RU');
 
         return response()->json([
             'success' => true,

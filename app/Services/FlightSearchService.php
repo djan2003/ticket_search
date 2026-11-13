@@ -26,6 +26,7 @@ class FlightSearchService
      * @param int $returnDayOfWeek Day of week for return (0-6)
      * @param int $daysAhead How many days ahead to search
      * @param int $limit Maximum number of results
+     * @param string $passport Passport whose visa-free list is searched
      * @return array
      */
     public function searchVisaFreeDestinations(
@@ -33,10 +34,11 @@ class FlightSearchService
         int $departureDayOfWeek = 5,
         int $returnDayOfWeek = 0,
         int $daysAhead = 90,
-        int $limit = 10
+        int $limit = 10,
+        string $passport = 'RU'
     ): array {
         $results = [];
-        $countries = config('countries.visa_free');
+        $countries = config("countries.visa_free.{$passport}");
 
         Log::info('Starting visa-free search', [
             'origin' => $origin,
@@ -331,6 +333,7 @@ class FlightSearchService
             $returnDays = is_array($returnDays) ? $returnDays : [$returnDays];
             
             $allResults = [];
+            $passport = config("airports.origins.{$origin}.passport", 'RU');
             
             // Search for each valid combination
             foreach ($departureDays as $depDay) {
@@ -346,7 +349,8 @@ class FlightSearchService
                         $depDay,
                         $retDay,
                         $daysAhead,
-                        PHP_INT_MAX
+                        PHP_INT_MAX,
+                        $passport
                     );
 
                     $allResults = array_merge($allResults, $results);
@@ -360,7 +364,7 @@ class FlightSearchService
 
             // Feed: cheapest flight per destination across everything, so the
             // landing has every direction (incl. Istanbul/Dubai), not just the top.
-            $this->feedService->store($origin, $this->cheapestPerDestination($allResults));
+            $this->feedService->store($origin, $this->cheapestPerDestination($allResults), $passport);
 
             // Telegram: curated short list, max 3 per destination.
             $telegramResults = $this->limitPerDestination($allResults, 3, $limit);

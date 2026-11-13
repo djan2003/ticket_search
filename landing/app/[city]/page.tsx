@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   DESTINATIONS,
+  PASSPORT_NAMES,
   destinationBySlug,
+  joinRu,
+  originsForDestination,
 } from "../../lib/destinations";
 import { getFeed, allFlights, flightsToDestination } from "../../lib/feed";
 import { FlightTable } from "../../components/FlightTable";
@@ -27,10 +30,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!dest) return {};
 
   const year = new Date().getFullYear();
-  const title = `Дешёвые авиабилеты в ${dest.nameRu} из Батуми, Тбилиси и Еревана ${year}`;
+  const from = joinRu(originsForDestination(dest).map((o) => o.nameGen));
+  const title = `Дешёвые авиабилеты в ${dest.nameRu} из ${from} ${year}`;
   const cheapest = flightsToDestination(allFlights(await getFeed()), dest.iata)[0];
   const description = priceMetaDescription(
-    `Дешёвые авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из Батуми, Тбилиси и Еревана`,
+    `Дешёвые авиабилеты в ${dest.nameRu} (${dest.countryRu}) на выходные из ${from}`,
     cheapest?.price ?? null,
     cheapest?.currency ?? "USD",
   );
@@ -52,6 +56,8 @@ export default async function CityPage({ params }: Params) {
   const flights = flightsToDestination(allFlights(feed), dest.iata);
   const cheapest = flights[0];
   const year = new Date().getFullYear();
+  const from = joinRu(originsForDestination(dest).map((o) => o.nameGen));
+  const passports = joinRu(dest.passports.map((p) => PASSPORT_NAMES[p]));
 
   // Price-by-month chart for the origin with the cheapest current flight.
   const calendarOrigin = cheapest?.origin ?? "BUS";
@@ -74,7 +80,7 @@ export default async function CityPage({ params }: Params) {
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-600">
           {dest.blurb} Ищем самые дешёвые билеты в {dest.nameRu} (
-          {dest.countryRu}) из Батуми, Тбилиси и Еревана на короткую поездку:
+          {dest.countryRu}) из {from} на короткую поездку:
           вылет в пятницу или субботу, возврат в воскресенье или понедельник.
           Обновляем каждый день.
         </p>
@@ -108,7 +114,7 @@ export default async function CityPage({ params }: Params) {
             items={[
               {
                 q: `Нужна ли виза в ${dest.countryRu}?`,
-                a: `Мы подбираем направления, безвизовые для путешественников из Грузии и Армении. Перед поездкой уточните актуальные правила въезда в ${dest.countryRu} для вашего паспорта.`,
+                a: `Мы показываем это направление как безвизовое для паспорта ${passports}. Перед поездкой уточните актуальные правила въезда в ${dest.countryRu} для вашего паспорта.`,
               },
               {
                 q: `Как купить билет в ${dest.nameRu}?`,
