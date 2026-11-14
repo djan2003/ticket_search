@@ -7,9 +7,12 @@ use App\Services\FeedService;
 use App\Services\FlightSearchService;
 use App\Services\SubscriberService;
 use App\Services\TelegramService;
+use Illuminate\Console\OutputStyle;
 use Mockery;
 use ReflectionMethod;
 use ReflectionProperty;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class SubscriptionTest extends TestCase
 {
@@ -34,6 +37,23 @@ class SubscriptionTest extends TestCase
 
         $this->assertSame(['2'], $subscribers->forOrigin('MOW'));
         $this->assertSame([], $subscribers->forOrigin('LED'));
+    }
+
+    public function test_owner_gets_subscriber_counts_per_city()
+    {
+        $subscribers = new SubscriberService();
+        $this->assertSame(['total' => 0, 'origins' => []], $subscribers->counts());
+
+        $subscribers->subscribe('1', 'MOW');
+        $subscribers->subscribe('1', 'LED');
+        $subscribers->subscribe('2', 'MOW');
+
+        $telegram = Mockery::mock(TelegramService::class);
+        $telegram->shouldReceive('sendMessage')->once()
+            ->with(Mockery::pattern('/Подписчиков: 2.*Батуми: 0.*Москва: 2.*Санкт-Петербург: 1/us'));
+
+        putenv('TELEGRAM_CHAT_ID=999');
+        $this->process($telegram, $subscribers, Mockery::mock(FeedService::class), 999, '/subs');
     }
 
     public function test_deep_link_subscribes_a_stranger_and_sends_current_flights()
@@ -105,6 +125,8 @@ class SubscriptionTest extends TestCase
             $subscribers,
             $feed
         );
+        // The owner branch prints the incoming message to the console
+        $command->setOutput(new OutputStyle(new ArrayInput([]), new NullOutput()));
 
         $method = new ReflectionMethod($command, 'processMessage');
         $method->invoke($command, [

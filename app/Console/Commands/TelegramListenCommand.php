@@ -108,13 +108,21 @@ class TelegramListenCommand extends Command
 
         // Handle commands
         if ($text === '/start' || $text === '/ping') {
-            $this->telegramService->sendMessage("🏓 Понг! Бот на связи и готов искать билеты.\n\nКоманды:\n/search — Запустить поиск билетов прямо сейчас\n/countries — Показать список стран для поиска");
+            $this->telegramService->sendMessage("🏓 Понг! Бот на связи и готов искать билеты.\n\nКоманды:\n/search — Запустить поиск билетов прямо сейчас\n/countries — Показать список стран для поиска\n/subs — Число подписчиков по городам");
         } 
         elseif ($text === '/countries') {
             $countries = config('countries.visa_free.RU');
             $list = "📌 *Список стран для поиска:*\n\n";
             foreach ($countries as $code => $data) {
                 $list .= "- {$data['name']} (" . implode(', ', $data['cities']) . ")\n";
+            }
+            $this->telegramService->sendMessage($list);
+        }
+        elseif ($text === '/subs') {
+            $counts = $this->subscribers->counts();
+            $list = "👥 Подписчиков: {$counts['total']}\n\n";
+            foreach (config('airports.origins') as $code => $origin) {
+                $list .= "{$origin['label']}: " . ($counts['origins'][$code] ?? 0) . "\n";
             }
             $this->telegramService->sendMessage($list);
         }

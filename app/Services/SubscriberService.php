@@ -66,6 +66,21 @@ class SubscriberService
     }
 
     /**
+     * Number of subscribers per origin city, plus the number of distinct chats.
+     *
+     * @return array ['total' => int, 'origins' => [origin => int]]
+     */
+    public function counts(): array
+    {
+        $all = $this->read();
+
+        return [
+            'total' => count($all),
+            'origins' => $all ? array_count_values(array_merge(...array_values($all))) : [],
+        ];
+    }
+
+    /**
      * @return array
      */
     protected function read(): array
