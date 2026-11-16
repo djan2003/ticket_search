@@ -52,7 +52,9 @@ class SubscriptionTest extends TestCase
         $telegram->shouldReceive('sendMessage')->once()
             ->with(Mockery::pattern('/Подписчиков: 2.*Батуми: 0.*Москва: 2.*Санкт-Петербург: 1/us'));
 
+        // A real .env loads TELEGRAM_CHAT_ID into $_ENV/$_SERVER, which win over putenv()
         putenv('TELEGRAM_CHAT_ID=999');
+        $_ENV['TELEGRAM_CHAT_ID'] = $_SERVER['TELEGRAM_CHAT_ID'] = '999';
         $this->process($telegram, $subscribers, Mockery::mock(FeedService::class), 999, '/subs');
     }
 
