@@ -50,7 +50,7 @@ const FAQ = [
   },
   {
     q: "Из каких городов ищете билеты?",
-    a: (["RU", "KZ"] as const)
+    a: (["RU", "KZ", "UZ"] as const)
       .map(
         (p) =>
           `Из ${joinRu(ORIGIN_LIST.filter((o) => o.passport === p).map((o) => o.nameGen))} — направления, безвизовые для паспорта ${PASSPORT_NAMES[p]}.`,
@@ -146,7 +146,11 @@ export default async function Home() {
           {joinRu(
             ORIGIN_LIST.filter((o) => o.passport === "KZ").map((o) => o.nameGen),
           )}{" "}
-          — для паспорта Казахстана.
+          — для паспорта Казахстана, из{" "}
+          {joinRu(
+            ORIGIN_LIST.filter((o) => o.passport === "UZ").map((o) => o.nameGen),
+          )}{" "}
+          — для паспорта Узбекистана.
         </p>
         <p>
           Это Турция, ОАЭ, Закавказье, Средняя Азия, Юго-Восточная Азия и

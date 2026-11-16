@@ -5,17 +5,21 @@ export const ORIGINS: Record<string, string> = {
   EVN: "Ереван",
   ALA: "Алматы",
   NQZ: "Астана",
+  TAS: "Ташкент",
+  IST: "Стамбул",
+  BEG: "Белград",
   MOW: "Москва",
   LED: "Санкт-Петербург",
 };
 
 // Passport whose visa-free list is searched (mirrors config/countries.php)
-export type Passport = "RU" | "KZ";
+export type Passport = "RU" | "KZ" | "UZ";
 
 // Genitive, for "паспорт России"
 export const PASSPORT_NAMES: Record<Passport, string> = {
   RU: "России",
   KZ: "Казахстана",
+  UZ: "Узбекистана",
 };
 
 export type Destination = {
@@ -30,39 +34,39 @@ export type Destination = {
 
 // Visa-free destinations per passport (mirrors config/countries.php on the backend)
 export const DESTINATIONS: Destination[] = [
-  { iata: "EVN", slug: "yerevan", nameRu: "Ереван", countryRu: "Армения", blurb: "Древняя столица у подножия Арарата, коньяк и тёплый приём.", passports: ["RU", "KZ"] },
-  { iata: "MSQ", slug: "minsk", nameRu: "Минск", countryRu: "Беларусь", blurb: "Просторный и зелёный город с безвизовым въездом.", passports: ["RU", "KZ"] },
-  { iata: "ALA", slug: "almaty", nameRu: "Алматы", countryRu: "Казахстан", blurb: "Горы, фуникулёры и лучшая еда Центральной Азии.", passports: ["RU"] },
-  { iata: "NQZ", slug: "astana", nameRu: "Астана", countryRu: "Казахстан", blurb: "Футуристичная столица в степи.", passports: ["RU"] },
+  { iata: "EVN", slug: "yerevan", nameRu: "Ереван", countryRu: "Армения", blurb: "Древняя столица у подножия Арарата, коньяк и тёплый приём.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "MSQ", slug: "minsk", nameRu: "Минск", countryRu: "Беларусь", blurb: "Просторный и зелёный город с безвизовым въездом.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "ALA", slug: "almaty", nameRu: "Алматы", countryRu: "Казахстан", blurb: "Горы, фуникулёры и лучшая еда Центральной Азии.", passports: ["RU", "UZ"] },
+  { iata: "NQZ", slug: "astana", nameRu: "Астана", countryRu: "Казахстан", blurb: "Футуристичная столица в степи.", passports: ["RU", "UZ"] },
   { iata: "GUW", slug: "atyrau", nameRu: "Атырау", countryRu: "Казахстан", blurb: "Город на Урале, ворота к Каспию.", passports: ["RU"] },
-  { iata: "BSZ", slug: "bishkek", nameRu: "Бишкек", countryRu: "Киргизия", blurb: "Старт для треков по Тянь-Шаню и озеру Иссык-Куль.", passports: ["RU", "KZ"] },
+  { iata: "BSZ", slug: "bishkek", nameRu: "Бишкек", countryRu: "Киргизия", blurb: "Старт для треков по Тянь-Шаню и озеру Иссык-Куль.", passports: ["RU", "KZ", "UZ"] },
   { iata: "OSS", slug: "osh", nameRu: "Ош", countryRu: "Киргизия", blurb: "Один из древнейших городов Ферганской долины.", passports: ["RU"] },
-  { iata: "DYU", slug: "dushanbe", nameRu: "Душанбе", countryRu: "Таджикистан", blurb: "Зелёная столица у Памирских гор.", passports: ["RU", "KZ"] },
+  { iata: "DYU", slug: "dushanbe", nameRu: "Душанбе", countryRu: "Таджикистан", blurb: "Зелёная столица у Памирских гор.", passports: ["RU", "KZ", "UZ"] },
   { iata: "TAS", slug: "tashkent", nameRu: "Ташкент", countryRu: "Узбекистан", blurb: "Метро-музей, базары и плов.", passports: ["RU", "KZ"] },
   { iata: "SKD", slug: "samarkand", nameRu: "Самарканд", countryRu: "Узбекистан", blurb: "Регистан и бирюзовые купола Великого шёлкового пути.", passports: ["RU", "KZ"] },
   { iata: "BEG", slug: "belgrade", nameRu: "Белград", countryRu: "Сербия", blurb: "Крепость Калемегдан и бурная ночная жизнь на Дунае.", passports: ["RU", "KZ"] },
-  { iata: "IST", slug: "istanbul", nameRu: "Стамбул", countryRu: "Турция", blurb: "Город на двух континентах: Босфор, базары и кухня.", passports: ["RU", "KZ"] },
-  { iata: "SAW", slug: "istanbul-sabiha", nameRu: "Стамбул (Сабиха)", countryRu: "Турция", blurb: "Азиатский аэропорт Стамбула — часто дешевле.", passports: ["RU", "KZ"] },
-  { iata: "AYT", slug: "antalya", nameRu: "Анталья", countryRu: "Турция", blurb: "Пляжи Средиземноморья и Ликийская тропа.", passports: ["RU", "KZ"] },
+  { iata: "IST", slug: "istanbul", nameRu: "Стамбул", countryRu: "Турция", blurb: "Город на двух континентах: Босфор, базары и кухня.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "SAW", slug: "istanbul-sabiha", nameRu: "Стамбул (Сабиха)", countryRu: "Турция", blurb: "Азиатский аэропорт Стамбула — часто дешевле.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "AYT", slug: "antalya", nameRu: "Анталья", countryRu: "Турция", blurb: "Пляжи Средиземноморья и Ликийская тропа.", passports: ["RU", "KZ", "UZ"] },
   { iata: "ADB", slug: "izmir", nameRu: "Измир", countryRu: "Турция", blurb: "Эгейское побережье и древний Эфес неподалёку.", passports: ["RU"] },
   { iata: "BKK", slug: "bangkok", nameRu: "Бангкок", countryRu: "Таиланд", blurb: "Храмы, уличная еда и ворота в Юго-Восточную Азию.", passports: ["RU", "KZ"] },
   { iata: "HKT", slug: "phuket", nameRu: "Пхукет", countryRu: "Таиланд", blurb: "Главный пляжный остров Андаманского моря.", passports: ["RU"] },
   { iata: "CNX", slug: "chiang-mai", nameRu: "Чиангмай", countryRu: "Таиланд", blurb: "Горный север Таиланда, храмы и кофейни.", passports: ["RU"] },
   { iata: "MLE", slug: "male", nameRu: "Мале", countryRu: "Мальдивы", blurb: "Атоллы, бунгало на воде и дайвинг.", passports: ["RU", "KZ"] },
-  { iata: "DXB", slug: "dubai", nameRu: "Дубай", countryRu: "ОАЭ", blurb: "Небоскрёбы, шопинг и пляжи круглый год.", passports: ["RU", "KZ"] },
-  { iata: "AUH", slug: "abu-dhabi", nameRu: "Абу-Даби", countryRu: "ОАЭ", blurb: "Мечеть шейха Зайда и остров Яс.", passports: ["RU", "KZ"] },
+  { iata: "DXB", slug: "dubai", nameRu: "Дубай", countryRu: "ОАЭ", blurb: "Небоскрёбы, шопинг и пляжи круглый год.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "AUH", slug: "abu-dhabi", nameRu: "Абу-Даби", countryRu: "ОАЭ", blurb: "Мечеть шейха Зайда и остров Яс.", passports: ["RU", "KZ", "UZ"] },
   { iata: "CMN", slug: "casablanca", nameRu: "Касабланка", countryRu: "Марокко", blurb: "Крупнейший город Марокко и мечеть Хасана II.", passports: ["RU"] },
   { iata: "RAK", slug: "marrakesh", nameRu: "Марракеш", countryRu: "Марокко", blurb: "Медина, площадь Джемаа эль-Фна и Атлас рядом.", passports: ["RU"] },
   { iata: "TUN", slug: "tunis", nameRu: "Тунис", countryRu: "Тунис", blurb: "Карфаген, Сиди-Бу-Саид и Средиземное море.", passports: ["RU"] },
   { iata: "HAV", slug: "havana", nameRu: "Гавана", countryRu: "Куба", blurb: "Ретро-автомобили, ром и карибские ритмы.", passports: ["RU"] },
   { iata: "HAN", slug: "hanoi", nameRu: "Ханой", countryRu: "Вьетнам", blurb: "Старый квартал, фо и бухта Халонг неподалёку.", passports: ["RU", "KZ"] },
   { iata: "SGN", slug: "ho-chi-minh", nameRu: "Хошимин", countryRu: "Вьетнам", blurb: "Энергичный юг Вьетнама и дельта Меконга.", passports: ["RU"] },
-  { iata: "SHJ", slug: "sharjah", nameRu: "Шарджа", countryRu: "ОАЭ", blurb: "Соседний с Дубаем эмират — часто дешевле долететь.", passports: ["KZ"] },
-  { iata: "TBS", slug: "tbilisi", nameRu: "Тбилиси", countryRu: "Грузия", blurb: "Старый город, серные бани и грузинская кухня.", passports: ["RU", "KZ"] },
-  { iata: "KUT", slug: "kutaisi", nameRu: "Кутаиси", countryRu: "Грузия", blurb: "Лоукост-ворота Грузии рядом с каньонами и пещерами.", passports: ["RU", "KZ"] },
-  { iata: "GYD", slug: "baku", nameRu: "Баку", countryRu: "Азербайджан", blurb: "Каспийская набережная, Старый город и Пламенные башни.", passports: ["RU", "KZ"] },
-  { iata: "MOW", slug: "moscow", nameRu: "Москва", countryRu: "Россия", blurb: "Музеи, театры и большой город на выходные.", passports: ["KZ"] },
-  { iata: "LED", slug: "saint-petersburg", nameRu: "Санкт-Петербург", countryRu: "Россия", blurb: "Эрмитаж, каналы и разводные мосты.", passports: ["KZ"] },
+  { iata: "SHJ", slug: "sharjah", nameRu: "Шарджа", countryRu: "ОАЭ", blurb: "Соседний с Дубаем эмират — часто дешевле долететь.", passports: ["KZ", "UZ"] },
+  { iata: "TBS", slug: "tbilisi", nameRu: "Тбилиси", countryRu: "Грузия", blurb: "Старый город, серные бани и грузинская кухня.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "KUT", slug: "kutaisi", nameRu: "Кутаиси", countryRu: "Грузия", blurb: "Лоукост-ворота Грузии рядом с каньонами и пещерами.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "GYD", slug: "baku", nameRu: "Баку", countryRu: "Азербайджан", blurb: "Каспийская набережная, Старый город и Пламенные башни.", passports: ["RU", "KZ", "UZ"] },
+  { iata: "MOW", slug: "moscow", nameRu: "Москва", countryRu: "Россия", blurb: "Музеи, театры и большой город на выходные.", passports: ["KZ", "UZ"] },
+  { iata: "LED", slug: "saint-petersburg", nameRu: "Санкт-Петербург", countryRu: "Россия", blurb: "Эрмитаж, каналы и разводные мосты.", passports: ["KZ", "UZ"] },
   { iata: "URC", slug: "urumqi", nameRu: "Урумчи", countryRu: "Китай", blurb: "Ближайший к Алматы китайский мегаполис: базары и уйгурская кухня.", passports: ["KZ"] },
   { iata: "BJS", slug: "beijing", nameRu: "Пекин", countryRu: "Китай", blurb: "Запретный город и Великая стена неподалёку.", passports: ["KZ"] },
   { iata: "HKG", slug: "hong-kong", nameRu: "Гонконг", countryRu: "Гонконг", blurb: "Небоскрёбы, пик Виктория и уличная еда.", passports: ["RU", "KZ"] },
@@ -109,6 +113,9 @@ export const ORIGIN_LIST: Origin[] = [
   { iata: "EVN", slug: "yerevan", nameRu: "Ереван", nameGen: "Еревана", passport: "RU" },
   { iata: "ALA", slug: "almaty", nameRu: "Алматы", nameGen: "Алматы", passport: "KZ" },
   { iata: "NQZ", slug: "astana", nameRu: "Астана", nameGen: "Астаны", passport: "KZ" },
+  { iata: "TAS", slug: "tashkent", nameRu: "Ташкент", nameGen: "Ташкента", passport: "UZ" },
+  { iata: "IST", slug: "istanbul", nameRu: "Стамбул", nameGen: "Стамбула", passport: "RU" },
+  { iata: "BEG", slug: "belgrade", nameRu: "Белград", nameGen: "Белграда", passport: "RU" },
   { iata: "MOW", slug: "moscow", nameRu: "Москва", nameGen: "Москвы", passport: "RU" },
   { iata: "LED", slug: "saint-petersburg", nameRu: "Санкт-Петербург", nameGen: "Санкт-Петербурга", passport: "RU" },
 ];

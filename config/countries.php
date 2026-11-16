@@ -16,6 +16,7 @@ return [
     'passports' => [
         'RU' => 'России',
         'KZ' => 'Казахстана',
+        'UZ' => 'Узбекистана',
     ],
 
     'visa_free' => [
@@ -196,6 +197,23 @@ return [
                 'name' => 'Maldives',
                 'cities' => ['MLE'], // Male
             ],
+        ],
+        'UZ' => [
+            // Source: MFA of Uzbekistan, "Визовые требования для граждан Республики Узбекистан"
+            // https://gov.uz/ru/mfa/pages/o-zbekiston-respublikasi-fuqarolari-uchun-viza-talablari (rev. 29.12.2025)
+            // Deliberately absent: Thailand (listed there, but a visa is required from 15.09.2026),
+            // Iran and Ukraine (no usable flights), Kenya/Sri Lanka (tourist registration, not visa-free).
+            // Only destinations that have a landing page are listed.
+            'TR' => ['name' => 'Turkey', 'cities' => ['IST', 'SAW', 'AYT']],
+            'AE' => ['name' => 'United Arab Emirates', 'cities' => ['DXB', 'AUH', 'SHJ']],
+            'GE' => ['name' => 'Georgia', 'cities' => ['TBS', 'KUT']],
+            'AM' => ['name' => 'Armenia', 'cities' => ['EVN']],
+            'AZ' => ['name' => 'Azerbaijan', 'cities' => ['GYD']],
+            'KZ' => ['name' => 'Kazakhstan', 'cities' => ['ALA', 'NQZ']],
+            'KG' => ['name' => 'Kyrgyzstan', 'cities' => ['BSZ']],
+            'TJ' => ['name' => 'Tajikistan', 'cities' => ['DYU']],
+            'RU' => ['name' => 'Russia', 'cities' => ['MOW', 'LED']],
+            'BY' => ['name' => 'Belarus', 'cities' => ['MSQ']],
         ],
     ],
 ];
